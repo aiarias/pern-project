@@ -2,11 +2,38 @@ import { pool } from "../db.js";
 import bcyrpt from "bcrypt"; //sirve para encriptar contraseñas
 import { createAccessToken } from "../libs/jwt.js";
 
-export const signin = (req, res) => {
-  res.send("Iniciando sesion");
+export const signin = async (req, res) => {
+  const { email, password } = req.body;
+
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
+
+  if (result.rowCount === 0) {
+    return res.status(400).json({ message: "El correo no esta registrado" });
+  }
+
+  const validPassword = await bcyrpt.compare(password, result.rows[0].password);
+
+  if (!validPassword) {
+    return res.status(400).json({ message: "Contraseña incorrecta" });
+  }
+
+  const token = await createAccessToken({ id: result.rows[0].id }); //aqui se puede enviar mas informacion en el token por ej {name: result.rows[0].name, id: result.rows[0].id, email: result.rows[0].email} esto va a frontend
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    // secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000, //1 dia
+  });
+
+  return res.json({
+    result: result.rows[0],
+  });
 };
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   try {
@@ -18,10 +45,17 @@ export const signup = async (req, res) => {
       [name, email, hashedPassword]
     );
 
-    const token = await createAccessToken({ id: result.rows[0].id });
+    const token = await createAccessToken({ id: result.rows[0].id }); //aqui se puede enviar mas informacion en el token por ej {name: result.rows[0].name, id: result.rows[0].id, email: result.rows[0].email} esto va a frontend
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      // secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000, //1 dia
+    });
 
     return res.json({
-      token: token,
+      result: result.rows[0],
     });
   } catch (error) {
     if (error.code === "23505") {
@@ -33,6 +67,13 @@ export const signup = async (req, res) => {
   }
 };
 
-export const singout = (req, res) => res.send("Cerrando sesion");
+export const singout = (req, res) => {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Sesion cerrada" });
+}
 
-export const profile = (req, res) => res.send("Perfil");
+
+export const profile = async (req, res) => {
+    const result  = await pool.query("SELECT * FROM users WHERE id = $1", [req.userId]);
+    return res.json(result.rows[0]);
+};

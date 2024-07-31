@@ -2,6 +2,7 @@ import { pool } from "../db.js";
 
 // aqui no consideramos try catch porque express-promise-router se encarga de los errores
 export const getAllTasks = async (req, res, next) => {
+  console.log(req.userId)
   const result = await pool.query("SELECT * FROM task");
   return res.json(result.rows);
 };
