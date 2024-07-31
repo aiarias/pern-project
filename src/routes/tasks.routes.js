@@ -1,4 +1,5 @@
-import Router from "express";
+import Router from "express-promise-router"; // Importo el enrutador de express nos ayuda con la toam de los errores
+
 import { createTask, getAllTasks, getTask, updateTask, deleteTask } from "../controllers/tasks.controller.js";
 
 const router = Router();
