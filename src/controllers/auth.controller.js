@@ -23,8 +23,8 @@ export const signin = async (req, res) => {
   const token = await createAccessToken({ id: result.rows[0].id }); //aqui se puede enviar mas informacion en el token por ej {name: result.rows[0].name, id: result.rows[0].id, email: result.rows[0].email} esto va a frontend
 
   res.cookie("token", token, {
-    httpOnly: true,
-    // secure: true,
+    // httpOnly: true,
+    secure: true,
     sameSite: "none",
     maxAge: 24 * 60 * 60 * 1000, //1 dia
   });
@@ -50,8 +50,8 @@ export const signup = async (req, res, next) => {
     const token = await createAccessToken({ id: result.rows[0].id }); //aqui se puede enviar mas informacion en el token por ej {name: result.rows[0].name, id: result.rows[0].id, email: result.rows[0].email} esto va a frontend
 
     res.cookie("token", token, {
-      httpOnly: true,
-      // secure: true,
+      // httpOnly: true,
+      secure: true,
       sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000, //1 dia
     });
@@ -61,9 +61,9 @@ export const signup = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === "23505") {
-      return res.status(409).json({
-        message: "El usuario ya existe",
-      }); //Error 409: Conflict
+      return res.status(400).json({
+        message: "El correo ya esta registrado",
+      }); //Error 400: Conflict
     }
     next(error);
   }

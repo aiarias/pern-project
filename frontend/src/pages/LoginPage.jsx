@@ -1,15 +1,29 @@
 import { Card, Input, Button, Label } from "../components/ui";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
   const { register, handleSubmit } = useForm();
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-  })
+  const { signin, errors } = useAuth();
+  const navigate = useNavigate();
+
+  const onSubmit = handleSubmit(async (data) => {
+    const user = await signin(data);
+
+    if (user) {
+      navigate("/profile");
+    }
+  });
   return (
     <div className="h-[calc(100vh-64px)] flex justify-center items-center">
       <Card>
+
+        {
+          errors && (errors.map(err => (
+            <p key={err} className="text-red-500 text-center">{err}</p>
+          )))
+        }
         <h1 className="text-4xl font-bold my-2 text-center">Sign in</h1>
 
         <form onSubmit={onSubmit}>
