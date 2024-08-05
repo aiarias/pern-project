@@ -1,7 +1,9 @@
 import { Routes, Route } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 
 import Navbar from "./components/navbar/Navbar";
 import { Container } from "./components/ui";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
@@ -13,19 +15,28 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 function App() {
+  const { isAuth } = useAuth();
+  console.log(isAuth);
+
   return (
     <>
       <Navbar />
       <Container className="py-5">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/tasks" element={<TasksPage />} />
-          <Route path="/task/new" element={<TaskFormPage />} />
-          <Route path="/task/1/edit" element={<TaskFormPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/tasks"/>}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
+
+          <Route element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}>
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/task/new" element={<TaskFormPage />} />
+            <Route path="/task/1/edit" element={<TaskFormPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+
           <Route path="*" element={<NotFound />}></Route>
         </Routes>
       </Container>

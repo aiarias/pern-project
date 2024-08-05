@@ -1,7 +1,20 @@
+import { Card, Input, Textarea } from "../components/ui"
+
 function TaskFormPage() {
     return (
         <div>
-            <h1>Task Form Page</h1>
+
+            <Card>
+                <form>
+                    <Input type="text" placeholder="Title" />
+                    <Textarea type="text" placeholder="Description" />
+
+                </form>
+            </Card>
+
+
+
+
         </div>
     );
 }
