@@ -1,5 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
+
 import { useAuth } from "./context/AuthContext";
+import { TaskProvider } from "./context/TaskContext";
 
 import Navbar from "./components/navbar/Navbar";
 import { Container } from "./components/ui";
@@ -16,7 +18,6 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   const { isAuth } = useAuth();
-  console.log(isAuth);
 
   return (
     <>
@@ -31,9 +32,18 @@ function App() {
           </Route>
 
           <Route element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}>
-            <Route path="/tasks" element={<TasksPage />} />
-            <Route path="/task/new" element={<TaskFormPage />} />
-            <Route path="/task/1/edit" element={<TaskFormPage />} />
+            
+            
+            <Route element={<TaskProvider>
+              {/* Lo que hace Outlet es renderizar los hijos de la ruta padre */}
+              <Outlet />
+            </TaskProvider>}>
+              <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/task/new" element={<TaskFormPage />} />
+              <Route path="/task/1/edit" element={<TaskFormPage />} />
+            </Route>
+
+
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
 

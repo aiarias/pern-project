@@ -1,8 +1,8 @@
 import { Card, Input, Textarea, Label, Button } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { createTaskRequest } from "../api/tasks.api";
 import {useState} from 'react'
+import { useTask } from "../context/TaskContext";
 
 
 function TaskFormPage() {
@@ -11,19 +11,15 @@ function TaskFormPage() {
   } } = useForm();
   const [postError, setPostError] = useState([])
   const navigate = useNavigate();
+  const {createTask} = useTask();
 
   const onSubmit = handleSubmit(async (data) => {
-
-    try {
-      const res = await createTaskRequest(data)
-      navigate('/tasks')
-      
-    } catch (error) {
-      if (error.response) {
-        setPostError([error.response.data.message])
-      }
-      
+    const task = await createTask(data);
+    if (task) {
+      navigate("/tasks");
     }
+    
+
 
   })
   return (
