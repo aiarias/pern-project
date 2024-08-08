@@ -1,9 +1,12 @@
 import { Card, Button } from "../ui";
-import { useTask } from "../../context/TaskContext";
+import { useTasks } from "../../context/TaskContext";
+import { useNavigate } from "react-router-dom";
 
 function TaskCard({ task }) {
 
-  const {deleteTask} = useTask();
+  const {deleteTask} = useTasks();
+
+  const navigate = useNavigate();
 
   return (
     <Card key={task.id} className={"px-7 py-2"}>
@@ -13,7 +16,9 @@ function TaskCard({ task }) {
       </div>
 
       <div className="my-2 flex justify-end gap-x-2">
-        <Button>Editar</Button>
+        <Button
+        onClick={() => navigate(`/task/${task.id}/edit`)}
+        >Editar</Button>
         <Button
           className="bg-red-500 hover:bg-red-600"
           onClick={async () => {
