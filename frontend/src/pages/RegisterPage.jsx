@@ -16,7 +16,7 @@ function RegisterPage() {
     const user = await signup(data); //esto revisa si el usuario se registro correctamente
 
     if (user) {
-      navigate("/profile");
+      navigate("/tasks");
     }
   });
 
@@ -66,7 +66,7 @@ function RegisterPage() {
           <Button>Register</Button>
 
           <div className="flex justify-between my-4">
-            <p>Do have an account</p>
+            <p className="mr-4">Already have an account</p>
             <Link to="/login" className="font-bold text-sky-600">
               Sign in
             </Link>

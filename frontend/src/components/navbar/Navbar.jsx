@@ -1,9 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "../ui";
-
 import { publicRoutes, privateRoutes } from "./navigation";
 import { Container } from "../ui/Container";
 import { useAuth } from "../../context/AuthContext";
+import { twMerge } from "tailwind-merge";
 
 //useLocation nos da la informacion actual de donde estamos
 
@@ -24,25 +23,30 @@ function Navbar() {
             <>
               {privateRoutes.map(({ path, name }) => (
                 <li
-                  className={`text-slate-300 ${
-                    location.pathname === path && "bg-sky-500 px-3 py-1"
-                  }`}
+                  className={twMerge(
+                    "text-slate-300 flex items-center px-3 py-1",
+                    location.pathname === path && "bg-sky-500"
+                  )}
                   key={path}
                 >
                   <Link to={path}>{name}</Link>
                 </li>
               ))}
 
-              <li onClick={signout}>
-                <Button>Logout</Button>
+              <li
+                className={"text-slate-300 flex items-center px-3 py-1 hover:cursor-pointer"}
+                onClick={signout}
+              >
+                Logout
               </li>
             </>
           ) : (
             publicRoutes.map(({ path, name }) => (
               <li
-                className={`text-slate-300 ${
-                  location.pathname === path && "bg-sky-500 px-3 py-1"
-                }`}
+                className={twMerge(
+                  "text-slate-300 flex items-center px-3 py-1",
+                  location.pathname === path && "bg-sky-500"
+                )}
                 key={path}
               >
                 <Link to={path}>{name}</Link>
