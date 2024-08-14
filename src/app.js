@@ -4,12 +4,14 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import taskRoutes from "./routes/tasks.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import { pool } from "./db.js";
+import { ORIGIN } from "./config.js";
 
 const app = express();
 
 // Middlewares
 app.use(cors({
-  origin: "http://localhost:5173", // TODO: cambiar por el dominio de produccion
+  origin: ORIGIN, // TODO: cambiar por el dominio de produccion
   credentials: true,
 }));// esto dice cualquier dominio que se conecte a mi api puede hacerlo. pero al colocar el orgin se restringe a solo ese dominio
 app.use(morgan("dev"));
@@ -19,6 +21,11 @@ app.use(express.urlencoded({ extended: false })); //TODO: se envia folmulario si
 
 // Routes
 app.get("/", (req, res) => res.json({ message: "Welcome to my API" }));
+app.get("/api/ping", async (req, res) => {
+  const result = await pool.query("SELECT NOW()");
+  return res.json({ message: result.rows[0] });
+});
+
 app.use('/api', taskRoutes);
 app.use('/api', authRoutes);
 
