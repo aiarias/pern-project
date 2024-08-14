@@ -3,11 +3,13 @@ import {
   getAllTaskRequest,
   deleteTaskRequest,
   createTaskRequest,
+  getTaskRequest,
+  updateTaskRequest,
 } from "../api/tasks.api";
 
 const TaskContext = createContext();
 
-export const useTask = () => {
+export const useTasks = () => {
   const context = useContext(TaskContext);
   if (!context) {
     throw new Error("useTasks debe estar dentro del proveedor TaskProvider");
@@ -23,6 +25,11 @@ export const TaskProvider = ({ children }) => {
     const res = await getAllTaskRequest(); // Aquí se hace la petición a la API al backend para obtener todas las tareas
     setTasks(res.data); // Aquí se setea el estado con las tareas obtenidas
   };
+
+  const loadTask = async (id) => {
+    const res = await getTaskRequest(id); // Aquí se hace la petición a la API al backend para obtener una tarea
+    return res.data
+  }
 
   const createTask = async (task) => {
     try {
@@ -45,6 +52,19 @@ export const TaskProvider = ({ children }) => {
     console.log(res);
   };
 
+  const updateTask = async (id, data) => {
+    try {
+      const res = await updateTaskRequest(id, data); // Aquí se hace la petición a la API al backend para actualizar una tarea
+      return res.data;
+    } catch (error) {
+      if (error.response) {
+        setErrors([error.response.data.message]);
+      }
+    }
+
+
+  }
+
   return (
     <TaskContext.Provider
       value={{
@@ -52,6 +72,9 @@ export const TaskProvider = ({ children }) => {
         createTask,
         loadTasks,
         deleteTask,
+        loadTask,
+        updateTask,
+        errors
       }}
     >
       {children}
